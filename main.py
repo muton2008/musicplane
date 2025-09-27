@@ -5,6 +5,7 @@ import os
 os.add_dll_directory(r"D:\allen\side-project\musicplane\fluidsynth-2.4.8-win10-x64\bin")  # Windows 下需要指定 DLL 路徑
 import fluidsynth
 import numpy as np
+import random
 
 # --- 初始化 Pygame ---
 pygame.init()
@@ -65,16 +66,16 @@ camera_offset = 0
 
 # --- 快速上下移動 4 度消耗能量 ---
 semitone_jump = 4
-energy_cost = 6.5
+energy_cost = 6
 
 # --- 能量條設定 ---
 energy = 0.0               # 初始能量
 energy_max = 100.0          # 能量最大值
-energy_increase_rate = 3.3  # 每秒增加量 (可調整)
+energy_increase_rate = 3.7  # 每秒增加量 (可調整)
 energy_bar_height = 20      # 能量條高度
 
 # --- 背景和聲設定 ---
-harmony_interval_semitones = [3, 5, 7]  # 3度、完全4度、5度 (半音距)
+harmony_interval_semitones = [5, 6, 8]  # 3度、完全4度、5度 (半音距)
 harmony_duration = 2.0  # 音長 2 秒
 harmony_timer = 0.0     # 計時器
 last_harmony_time = time.time()
@@ -168,21 +169,20 @@ while True:
 
     current_time = time.time()
     if current_time - last_harmony_time >= 2.0:
-        # 關掉上一組和聲
+        # 關掉上一個和聲
         for note in harmony_notes_playing:
             fs.noteoff(0, note)
         harmony_notes_playing = []
 
-        # 計算新的和聲音符
+        # 計算新的和聲音符，只取隨機一個
         offset = (screen_height//2 - player.rect.centery) // 10
         base_freq = freq_from_semitone(440.0, offset)
-        harmony_notes_playing = []
-        for semitone_offset in harmony_interval_semitones:
-            freq = freq_from_semitone(base_freq, semitone_offset)
-            midi_note = int(round(69 + 12 * np.log2(freq / 440.0)))
-            fs.noteon(0, midi_note, 80)
-            harmony_notes_playing.append(midi_note)
-        
+        semitone_offset = random.choice(harmony_interval_semitones)  # 隨機選一個
+        freq = freq_from_semitone(base_freq, semitone_offset)
+        midi_note = int(round(69 + 12 * np.log2(freq / 440.0)))
+        fs.noteon(0, midi_note, 80)
+        harmony_notes_playing.append(midi_note)
+
         last_harmony_time = current_time
 
     # --- 在主迴圈最後，每幀檢查是否關閉2秒和聲 ---
