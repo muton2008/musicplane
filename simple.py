@@ -54,8 +54,8 @@ button_font = pygame.font.SysFont('Consolas', 30, bold=True)
 BIRD_PATH = os.path.join('.', 'image', 'bird.gif')
 OWL_PATH = os.path.join('.', 'image', 'owl.gif')
 
-BIRD_SCALE = (120, 120)
-OWL_SCALE = (120, 120) 
+BIRD_SCALE = (100, 100)
+OWL_SCALE = (100, 100) 
 # -----------------------------
 
 # --- 載入 GIF 函數  ---
@@ -181,7 +181,7 @@ class Plane:
         self.tilt_angle = 0  
         self.paused = False 
         self.max_tilt = 20
-        self.detection_radius = 70
+        self.detection_radius = 85
         self.show_radius = True 
 
     def draw(self, camera_offset):
@@ -241,7 +241,7 @@ center_x = screen_width // 2
 camera_offset = 0
 semitone_jump = 5
 energy_cost = 5.8
-energy_increase_rate = 3.2
+energy_increase_rate = 2.6
 C_major = [0, 2, 4, 5, 7, 9, 11] 
 freq = 442
 elapsed_time_sec = 0.0 
@@ -364,17 +364,17 @@ while True:
                     sys.exit()
                 
                 # ... 快速跳躍邏輯 ...
-                if event.key == pygame.K_SPACE and energy >= energy_cost:
+                if event.key == pygame.K_w and energy >= energy_cost:
                     player.rect.y -= semitone_jump * 10
                     player.tilt_angle = player.max_tilt 
                     energy -= energy_cost
                 
-                if (event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and energy >= energy_cost:
+                if event.key == pygame.K_s and energy >= energy_cost:
                     player.rect.y += semitone_jump * 10
                     player.tilt_angle = -player.max_tilt 
                     energy -= energy_cost
                 
-                if event.key == pygame.K_s:  
+                if event.key == pygame.K_SPACE:  
                     drum_sound.play()
 
                 if event.key == pygame.K_p:
@@ -432,7 +432,7 @@ while True:
         energy += energy_increase_rate * delta_time 
 
         # 4. 音樂/偵測邏輯
-        if keys[pygame.K_z]:
+        if keys[pygame.K_a]:
             if not player.paused:
                 if player.current_sound:
                     player.current_sound.stop()
@@ -441,7 +441,7 @@ while True:
             nearby_objects = []
             type_counts = {}
             current_delta_score = 0
-            energy -= 0.09 
+            energy -= 0.11
         else:
             if player.paused:
                 player.paused = False
