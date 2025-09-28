@@ -374,8 +374,25 @@ while True:
                     player.tilt_angle = -player.max_tilt 
                     energy -= energy_cost
                 
-                if event.key == pygame.K_SPACE:  
+                if event.key == pygame.K_d:  
                     drum_sound.play()
+
+                    # 擊退範圍
+                    repel_radius =  95 
+                    repel_force = 35    # 擊退的強度（越大推得越遠）
+
+                    player_center = np.array(player.rect.center)
+
+                    for obj in flying_objects:
+                        obj_center = np.array(obj.rect.center)
+                        distance = np.linalg.norm(player_center - obj_center)
+
+                        if distance <= repel_radius and distance > 0:
+                            # 計算方向（從玩家到物件的向量，反轉成擊退方向）
+                            direction = (obj_center - player_center) / distance
+                            # 給予擊退效果（直接位移，或是你也可以給 obj.speed 做暫時加速）
+                            obj.rect.x += int(direction[0] * repel_force)
+                            obj.rect.y += int(direction[1] * repel_force)
 
                 if event.key == pygame.K_p:
                     music_mode = True
@@ -432,7 +449,7 @@ while True:
         energy += energy_increase_rate * delta_time 
 
         # 4. 音樂/偵測邏輯
-        if keys[pygame.K_a]:
+        if keys[pygame.K_SPACE]:
             if not player.paused:
                 if player.current_sound:
                     player.current_sound.stop()
