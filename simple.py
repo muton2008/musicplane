@@ -40,7 +40,7 @@ OWL_SCORE = -0.4
 BIRD_SCORE = 0.25
 WIN_SCORE = 500.0
 LOSE_SCORE = 0.0
-SPAWN_INTERVAL = 45 # 將生成間隔作為全域常數
+SPAWN_INTERVAL = 40 # 將生成間隔作為全域常數
 energy_max = 500.0
 energy_bar_height = 20
 
@@ -54,8 +54,8 @@ button_font = pygame.font.SysFont('Consolas', 30, bold=True)
 BIRD_PATH = os.path.join('.', 'image', 'bird.gif')
 OWL_PATH = os.path.join('.', 'image', 'owl.gif')
 
-BIRD_SCALE = (80, 80)
-OWL_SCALE = (100, 100) 
+BIRD_SCALE = (120, 120)
+OWL_SCALE = (120, 120) 
 # -----------------------------
 
 # --- 載入 GIF 函數  ---
@@ -181,7 +181,7 @@ class Plane:
         self.tilt_angle = 0  
         self.paused = False 
         self.max_tilt = 20
-        self.detection_radius = 150
+        self.detection_radius = 70
         self.show_radius = True 
 
     def draw(self, camera_offset):
@@ -409,12 +409,12 @@ while True:
         spawn_timer += 1
         if spawn_timer > SPAWN_INTERVAL:
             spawn_timer = 0
-            y_pos = random.randint(50, screen_height - 50 - max(BIRD_SCALE[1], OWL_SCALE[1])) 
+            y_pos = random.randint(camera_offset - 20, camera_offset + screen_height + 20 - max(BIRD_SCALE[1], OWL_SCALE[1])) 
             x_pos = screen_width + random.randint(0, 200) 
             
-            if random.random() < 0.38:
+            if random.random() < 0.39:
                 flying_objects.append(
-                    FlyingObject(x_pos, y_pos, BIRD_ANIM, BIRD_SCALE, speed=random.randint(2, 4), obj_type='bird')
+                    FlyingObject(x_pos, y_pos, BIRD_ANIM, BIRD_SCALE, speed=random.randint(3, 5), obj_type='bird')
                 )
             else:
                 flying_objects.append(
