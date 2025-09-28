@@ -6,11 +6,15 @@ import random
 import pyganim
 from PIL import Image
 import os 
+import math
+
 
 """
 bird painter:https://pixabay.com/gifs/humming-bird-bird-fly-wings-4234/
 owl painter:https://pixabay.com/gifs/bird-hark-eagle-fly-flying-wings-15079/
-pake command: nuitka --standalone --onefile --plugin-enable=pylint-warnings --output-dir=dist simple.py
+pake command: 
+exe小:nuitka --standalone --onefile --plugin-enable=pylint-warnings --output-dir=dist simple.py
+快速編譯/exe大:python -m nuitka --standalone --onefile --lto=no simple.py
 """
 
 # --- 初始化 Pygame ---
@@ -253,6 +257,7 @@ current_delta_score = 0
 nearby_objects = []
 type_counts = {}
 
+music_mode = False
 
 # --- 遊戲初始化和重置函數 ---
 def reset_game():
@@ -338,6 +343,9 @@ reset_game()
 
 # --- 主遊戲迴圈 ---
 while True:
+    if music_mode:
+        WIN_SCORE = math.inf
+        energy += 350
     
     # --- 事件處理 ---
     for event in pygame.event.get():
@@ -368,6 +376,9 @@ while True:
                 
                 if event.key == pygame.K_s:  
                     drum_sound.play()
+
+                if event.key == pygame.K_p:
+                    music_mode = True
         
         elif current_game_state in [GAME_STATE['WIN'], GAME_STATE['LOSE']]:
             if event.type == pygame.MOUSEBUTTONDOWN:
