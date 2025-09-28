@@ -10,6 +10,7 @@ import os
 """
 bird painter:https://pixabay.com/gifs/humming-bird-bird-fly-wings-4234/
 owl painter:https://pixabay.com/gifs/bird-hark-eagle-fly-flying-wings-15079/
+pake command: nuitka --standalone --onefile --plugin-enable=pylint-warnings --output-dir=dist simple.py
 """
 
 # --- 初始化 Pygame ---
@@ -35,7 +36,7 @@ OWL_SCORE = -0.4
 BIRD_SCORE = 0.25
 WIN_SCORE = 500.0
 LOSE_SCORE = 0.0
-SPAWN_INTERVAL = 60 # 將生成間隔作為全域常數
+SPAWN_INTERVAL = 45 # 將生成間隔作為全域常數
 energy_max = 500.0
 energy_bar_height = 20
 
@@ -53,7 +54,7 @@ BIRD_SCALE = (80, 80)
 OWL_SCALE = (100, 100) 
 # -----------------------------
 
-# --- 載入 GIF 函數 (未修改) ---
+# --- 載入 GIF 函數  ---
 def load_gif_animation(path, new_scale, flip_x=False):
     pil_img = Image.open(path)
     frames = []
@@ -87,9 +88,8 @@ def load_gif_animation(path, new_scale, flip_x=False):
     anim = pyganim.PygAnimation(frames)
     anim.play()
     return anim
-# -----------------------------
 
-# --- 全域載入動畫（修正：確保動畫物件在 reset_game 前就存在） ---
+# --- 全域載入動畫 ---
 try:
     BIRD_ANIM = load_gif_animation(BIRD_PATH, BIRD_SCALE, flip_x=False) 
     OWL_ANIM = load_gif_animation(OWL_PATH, OWL_SCALE, flip_x=True) 
@@ -107,7 +107,7 @@ except Exception as e:
     OWL_ANIM.play()
 # -----------------------------
 
-# --- 飛行物件類別 (未修改) ---
+# --- 飛行物件類別 ---
 class FlyingObject:
     def __init__(self, x, y, anim_obj, obj_size, speed=3, obj_type="unknown"): 
         self.anim = anim_obj
@@ -123,7 +123,7 @@ class FlyingObject:
 # -----------------------------
 
 
-# --- 音樂相關函數 (未修改) ---
+# --- 音樂相關函數 ---
 def freq_from_semitone(base, semitone):
     return base * (2 ** (semitone / 12))
 
@@ -157,7 +157,7 @@ def generate_drum(duration=0.5, sample_rate=44100):
 drum_sound = generate_drum()
 base_freq = 440.0 
 
-# --- 飛機類別 (未修改) ---
+# --- 飛機類別 ---
 class Plane:
     def __init__(self, x, y):
         try:
@@ -232,10 +232,10 @@ class Plane:
         return nearby_objects, type_counts, delta_score
 
 
-# --- 遊戲主流程變數初始化 (修正：將所有變數都初始化) ---
+# --- 遊戲主流程變數初始化 ---
 center_x = screen_width // 2
 camera_offset = 0
-semitone_jump = 4
+semitone_jump = 5
 energy_cost = 5.8
 energy_increase_rate = 3.2
 C_major = [0, 2, 4, 5, 7, 9, 11] 
@@ -247,8 +247,8 @@ flying_objects = []
 spawn_timer = 0
 music_line = []
 start_game_time = 0.0
-music_time_start = 0.0 # 修正：專用於控制音樂/軌跡更新間隔的計時器
-energy = 200.0
+music_time_start = 0.0
+energy = 180.0
 current_delta_score = 0
 nearby_objects = []
 type_counts = {}
@@ -266,7 +266,7 @@ def reset_game():
     # 重置遊戲狀態
     current_game_state = GAME_STATE['RUNNING']
 
-    # 重置時間 (修正：確保音樂計時器也被重置)
+    # 重置時間 
     start_game_time = time.time()
     music_time_start = time.time() # 專門用於音樂節拍的計時器
     elapsed_time_sec = 0.0
@@ -284,7 +284,7 @@ def reset_game():
     type_counts = {}
     player.paused = False 
 
-# --- 終止畫面繪製函數 (未修改) ---
+# --- 終止畫面繪製函數 ---
 def draw_end_screen(state, time_taken=None):
     overlay = pygame.Surface((screen_width, screen_height))
     overlay.set_alpha(150)
@@ -420,7 +420,7 @@ while True:
         delta_time = clock.get_time() / 1000.0
         energy += energy_increase_rate * delta_time 
 
-        # 4. 音樂/偵測邏輯 (Z鍵反轉邏輯)
+        # 4. 音樂/偵測邏輯
         if keys[pygame.K_z]:
             if not player.paused:
                 if player.current_sound:
